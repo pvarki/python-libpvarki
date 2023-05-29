@@ -26,7 +26,8 @@ TLDR
 If ENV contains variable LOG_GLOBAL_LABELS_JSON then this is parsed as JSON and those are automatically
 added as extras to all logger calls.
 
-You can use https://github.com/trentm/go-ecslog to pretty-print the ECS logs
+You can use https://github.com/trentm/go-ecslog to pretty-print the ECS logs, or set ENV variable
+LOG_CONSOLE_FORMATTER to "utc" (or "local") for more traditional text log format.
 
 Docker
 ------
