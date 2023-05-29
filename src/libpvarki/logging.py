@@ -9,6 +9,9 @@ import datetime
 import copy
 
 
+import ecs_logging
+
+
 class UTCISOFormatter(logging.Formatter):
     """Output timestamps in UTC ISO timestamps"""
 
@@ -30,6 +33,9 @@ DEFAULT_LOGGING_CONFIG = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
+        "ecs": {
+            "()": ecs_logging.StdlibFormatter,
+        },
         "utc": {
             "()": UTCISOFormatter,
             "format": DEFAULT_LOG_FORMAT,
@@ -41,7 +47,7 @@ DEFAULT_LOGGING_CONFIG = {
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "formatter": "utc",
+            "formatter": "ecs",
         },
     },
     "root": {

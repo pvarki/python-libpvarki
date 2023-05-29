@@ -342,6 +342,21 @@ files = [
 ]
 
 [[package]]
+name = "ecs-logging"
+version = "2.0.2"
+description = "Logging formatters for ECS (Elastic Common Schema) in Python"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "ecs_logging-2.0.2-py3-none-any.whl", hash = "sha256:543ed7b634901aee465fddf70f52b6fdbd35e825e7cbcae2e664d7dfdff2f859"},
+    {file = "ecs_logging-2.0.2.tar.gz", hash = "sha256:34567bda91534a480f12117c30e1aac78489cc9a0ace172014d80f3d1e29c85b"},
+]
+
+[package.extras]
+develop = ["elastic-apm", "mock", "pytest", "pytest-cov", "structlog"]
+
+[[package]]
 name = "exceptiongroup"
 version = "1.1.1"
 description = "Backport of PEP 654 (exception groups)"
@@ -1116,4 +1131,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "637145f386e6493a0c692d47cfa3430a00b856531c9a81c04403614ce4d1139b"
+content-hash = "4d25bae939fda321ff618386e07f23472f7eaa9d50648a99b67cabe81abdc5f6"
