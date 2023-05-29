@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "libpvarki"
-version = "0.1.0"
+version = "1.0.0"
 description = "Common helpers like standard logging init"
 authors = ["Eero af Heurlin <eero.afheurlin@iki.fi>"]
 homepage = "https://github.com/pvarki/python-libpvarki/"
@@ -57,6 +57,7 @@ branch = true
 
 [tool.poetry.dependencies]
 python = "^3.8"
+ecs-logging = "^2.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.1"

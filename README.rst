@@ -4,6 +4,30 @@ libpvarki
 
 Common helpers like standard logging init
 
+Logging
+-------
+
+Default logging init outputs ECS compatible JSON that can then be handled by whatever log aggregator
+
+TLDR
+
+.. code-block:: python
+
+    import logging
+
+    from libpvarki.logging import init_logging
+
+    LOGGER = logging.getLogger(__name__)
+
+    def main() -> None:
+        init_logging(logging.INFO)
+        LOGGER.info("This is info")
+
+If ENV contains variable LOG_GLOBAL_LABELS_JSON then this is parsed as JSON and those are automatically
+added as extras to all logger calls.
+
+You can use https://github.com/trentm/go-ecslog to pretty-print the ECS logs, or set ENV variable
+LOG_CONSOLE_FORMATTER to "utc" (or "local") for more traditional text log format.
 
 Docker
 ------
