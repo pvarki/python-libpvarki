@@ -73,6 +73,7 @@ pre-commit = "^2.17"
 pytest-asyncio = "^0.18"
 bump2version = "^1.0"
 detect-secrets = "^1.2"
+httpx = ">=0.23,<1.0" # caret behaviour on 0.x is to lock to 0.x.*
 
 [build-system]
 requires = ["poetry-core>=1.2.0"]
