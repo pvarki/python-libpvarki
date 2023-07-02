@@ -38,3 +38,15 @@ def test_create(norppa11: Dict[str, str], mtlsclient: TestClient) -> None:
     payload = resp.json()
     assert "success" in payload
     assert payload["success"]
+
+
+def test_openapijson(mtlsclient: TestClient) -> None:
+    """Check that we can fetch the JSON"""
+    resp = mtlsclient.get("/middleware/openapi.json")
+    assert resp.status_code == 200
+
+
+def test_openapi_docs(mtlsclient: TestClient) -> None:
+    """Check that we can fetch the dcos"""
+    resp = mtlsclient.get("/middleware/docs")
+    assert resp.status_code == 200
