@@ -17,7 +17,7 @@ def get_session(
 ) -> aiohttp.ClientSession:
     """Get a session with correct SSL/TLS contexts set,
     if the cert paths are not set ENV or defaults will be used"""
-    ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+    ssl_ctx = ssl.create_default_context()
     dataroot = Path(CONFIG("PERSISTENT_DATA_PATH", default="/data/persistent"))
     if client_cert_paths:
         client_cert_path = client_cert_paths[0]
@@ -27,11 +27,15 @@ def get_session(
         client_key_path = Path(CONFIG("CLIENT_KEY_PATH", default=f"{dataroot}/private/mtlsclient.key"))
     if not extra_ca_certs_path:
         extra_ca_certs_path = Path(CONFIG("LOCAL_CA_CERTS_PATH", default="/ca_public"))
-    LOGGER.debug("Loading client cert from {} and {}".format(client_cert_path, client_key_path))
+    LOGGER.info("Loading client cert from {} and {}".format(client_cert_path, client_key_path))
     ssl_ctx.load_cert_chain(client_cert_path, client_key_path)
-    LOGGER.debug("Loading local CA certs from {}".format(extra_ca_certs_path))
-    ssl_ctx.load_verify_locations(capath=extra_ca_certs_path)
+    LOGGER.info("Loading local CA certs from {}".format(extra_ca_certs_path))
+    for cafile in extra_ca_certs_path.iterdir():
+        if not cafile.is_file():
+            continue
+        LOGGER.debug("Adding cert {}".format(cafile))
+        ssl_ctx.load_verify_locations(str(cafile))
 
-    conn = aiohttp.TCPConnector(ssl_context=ssl_ctx)
+    conn = aiohttp.TCPConnector(ssl=ssl_ctx)
     session = aiohttp.ClientSession(connector=conn)
     return session
