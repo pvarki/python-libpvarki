@@ -11,8 +11,8 @@ class OperationResultResponse(BaseModel, extra="forbid"):
     """Communicate result of operation"""
 
     success: bool = Field(description="Was the operation a success, used in addition to http status code")
-    extra: Optional[str] = Field(description="Extra information", default=None, nullable=True)
-    error: Optional[str] = Field(description="Error message if any", default=None, nullable=True)
+    extra: Optional[str] = Field(description="Extra information", default=None, json_schema_extra={"nullable": True})
+    error: Optional[str] = Field(description="Error message if any", default=None, json_schema_extra={"nullable": True})
 
 
 class UserCRUDRequest(BaseModel, extra="forbid"):
@@ -28,5 +28,7 @@ class UserInstructionFragment(BaseModel, extra="forbid"):
 
     html: str = Field(description="The HTML content will be shown for this products instructions")
     inject_css: Optional[str] = Field(
-        description="If extra stylesheet is needed, set the fully qualified URI", default=None, nullable=True
+        description="If extra stylesheet is needed, set the fully qualified URI",
+        default=None,
+        json_schema_extra={"nullable": True},
     )
