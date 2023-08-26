@@ -11,6 +11,8 @@ from libadvian.testhelpers import monkeysession  # pylint: disable=W0611
 from libadvian.logging import init_logging
 from aiohttp import web
 
+from libpvarki.mtlshelp import get_ssl_context
+
 init_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
@@ -57,15 +59,7 @@ async def test_server(datadir: Path) -> AsyncGenerator[str, None]:
     app = web.Application()
     app.add_routes([web.get("/", handle), web.get("/{name}", handle)])
 
-    ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-    LOGGER.info("Loading server cert from {}".format(server_cert))
-    ssl_ctx.load_cert_chain(server_cert[0], server_cert[1])
-    LOGGER.info("Loading local CA certs from {}".format(extra_ca_certs_path))
-    for cafile in extra_ca_certs_path.iterdir():
-        if not cafile.is_file():
-            continue
-        LOGGER.debug("Adding cert {}".format(cafile))
-        ssl_ctx.load_verify_locations(str(cafile))
+    ssl_ctx = get_ssl_context(server_cert, extra_ca_certs_path)
     # Enable client cert as required
     ssl_ctx.verify_mode = ssl.CERT_REQUIRED
 
