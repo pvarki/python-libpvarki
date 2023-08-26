@@ -41,3 +41,18 @@ async def test_session_getter_manual(datadir: Path, test_server: str) -> None:
         resp.raise_for_status()
 
     await session.close()
+
+
+@pytest.mark.asyncio
+async def test_session_getter_context_defaults(test_server: str) -> None:
+    """Test that use the getter as context manager"""
+    async with get_session() as session:
+        assert session
+        uri = f"{test_server}/context_defaults"
+
+        LOGGER.debug("requesting {}".format(uri))
+        async with session.get(uri) as resp:
+            LOGGER.debug("got response {}".format(resp))
+            resp.raise_for_status()
+
+    assert session.closed
