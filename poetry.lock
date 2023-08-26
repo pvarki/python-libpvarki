@@ -1108,6 +1108,20 @@ files = [
 ]
 
 [[package]]
+name = "libadvian"
+version = "1.4.0"
+description = "Small helpers that do not warrant their own library"
+optional = false
+python-versions = ">=3.6.2,<4.0"
+files = [
+    {file = "libadvian-1.4.0-py3-none-any.whl", hash = "sha256:f1c41a0c4777c4b3f36e9d94a9fb2c3c76c6fa4bc7922d7002ba9b06ee51888e"},
+    {file = "libadvian-1.4.0.tar.gz", hash = "sha256:433579a941d5a833022000892da73f0e69b4cfed7d538f4224597d61bb19b8cd"},
+]
+
+[package.extras]
+http = ["frozendict (>=2.3,<3.0)", "requests (>=2.28,<3.0)"]
+
+[[package]]
 name = "markdown-it-py"
 version = "3.0.0"
 description = "Python port of markdown-it. Markdown parsing, done right!"
@@ -2107,4 +2121,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "f62eb4de0dbc594291f165264ad74e951be5794fdc4fb6663dd50ebf83238076"
+content-hash = "5960dd92a0eace9e3917879b64a27befd3c6fd1e4fb2759f704428b1fea88e63"
