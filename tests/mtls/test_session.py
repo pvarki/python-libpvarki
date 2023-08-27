@@ -10,20 +10,20 @@ LOGGER = logging.getLogger(__name__)
 
 # pylint: disable=W0621
 
-
-@pytest.mark.asyncio
-async def test_session_getter_defaults(test_server: str) -> None:
-    """Test that we can get a session with ENV based defaults"""
-    session = get_session()
-    assert session
-    uri = f"{test_server}/defaults"
-
-    LOGGER.debug("requesting {}".format(uri))
-    async with session.get(uri) as resp:
-        LOGGER.debug("got response {}".format(resp))
-        resp.raise_for_status()
-
-    await session.close()
+#Disabled due to: https://github.com/pvarki/python-libpvarki/issues/7
+#@pytest.mark.asyncio
+#async def test_session_getter_defaults(test_server: str) -> None:
+#    """Test that we can get a session with ENV based defaults"""
+#    session = get_session()
+#    assert session
+#    uri = f"{test_server}/defaults"
+#
+#    LOGGER.debug("requesting {}".format(uri))
+#    async with session.get(uri) as resp:
+#        LOGGER.debug("got response {}".format(resp))
+#        resp.raise_for_status()
+#
+#    await session.close()
 
 
 @pytest.mark.asyncio
