@@ -22,3 +22,21 @@ jobs:
           dockerfile-name: Dockerfile_alpine
           dockerfile-target: devel_shell
           image-tag: python-libpvarki:devel_shell
+
+    debian-tox:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: pvarki/ci@main
+        with:
+          dockerfile-name: Dockerfile_debian
+          dockerfile-target: tox
+          image-tag: python-libpvarki:tox
+      
+    debian-devel_shell:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: pvarki/ci@main
+        with:
+          dockerfile-name: Dockerfile_debian
+          dockerfile-target: devel_shell
+          image-tag: python-libpvarki:devel_shell
