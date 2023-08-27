@@ -1,3 +1,5 @@
+![Build Status](https://github.com/pvarki/python-libpvarki/actions/workflows/build.yml/badge.svg)
+
 =========
 libpvarki
 =========
