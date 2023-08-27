@@ -16,7 +16,8 @@ RUN export RESOLVED_VERSIONS=`pyenv_resolve $PYTHON_VERSIONS` \
     && true \
     # Fix git runtime fatal:
     # unsafe repository ('/app' is owned by someone else)
-    && git config --global --add safe.directory /app
+    && git config --global --add safe.directory /app \
+    && apk add g++
 
 ######################
 # Base builder image #
