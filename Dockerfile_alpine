@@ -78,7 +78,7 @@ FROM builder_base as production_build
 # Copy entrypoint script
 COPY ./docker/entrypoint.sh /docker-entrypoint.sh
 # Only files needed by production setup
-COPY ./poetry.lock ./pyproject.toml ./README.rst ./src /app/
+COPY ./poetry.lock ./pyproject.toml ./README.md ./src /app/
 WORKDIR /app
 # Build the wheel package with poetry and add it to the wheelhouse
 RUN --mount=type=ssh source /.venv/bin/activate \

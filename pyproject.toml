@@ -6,7 +6,7 @@ authors = ["Eero af Heurlin <eero.afheurlin@iki.fi>"]
 homepage = "https://github.com/pvarki/python-libpvarki/"
 repository = "https://github.com/pvarki/python-libpvarki/"
 license = "MIT"
-readme = "README.rst"
+readme = "README.md"
 
 
 [tool.black]

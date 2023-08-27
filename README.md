@@ -1,13 +1,10 @@
 ![Build Status](https://github.com/pvarki/python-libpvarki/actions/workflows/build.yml/badge.svg)
 
-=========
-libpvarki
-=========
+# libpvarki
 
 Common helpers like standard logging init
 
-Logging
--------
+## Logging
 
 Default logging init outputs ECS compatible JSON that can then be handled by whatever log aggregator
 
@@ -31,8 +28,7 @@ added as extras to all logger calls.
 You can use https://github.com/trentm/go-ecslog to pretty-print the ECS logs, or set ENV variable
 LOG_CONSOLE_FORMATTER to "utc" (or "local") for more traditional text log format.
 
-Docker
-------
+## Docker
 
 For more controlled deployments and to get rid of "works on my computer" -syndrome, we always
 make sure our software works under docker.
@@ -87,8 +83,7 @@ the "tox" target in the Dockerfile::
     docker build --ssh default --target tox -t libpvarki:tox .
     docker run --rm -it -v `pwd`":/app" `echo $DOCKER_SSHAGENT` libpvarki:tox
 
-Development
------------
+## Development
 
 TLDR:
 
