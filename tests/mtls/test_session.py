@@ -10,9 +10,9 @@ LOGGER = logging.getLogger(__name__)
 
 # pylint: disable=W0621
 
-#Disabled due to: https://github.com/pvarki/python-libpvarki/issues/7
-#@pytest.mark.asyncio
-#async def test_session_getter_defaults(test_server: str) -> None:
+# Disabled due to: https://github.com/pvarki/python-libpvarki/issues/7
+# @pytest.mark.asyncio
+# async def test_session_getter_defaults(test_server: str) -> None:
 #    """Test that we can get a session with ENV based defaults"""
 #    session = get_session()
 #    assert session
