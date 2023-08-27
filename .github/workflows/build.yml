@@ -31,7 +31,7 @@ jobs:
           dockerfile-name: Dockerfile_debian
           dockerfile-target: tox
           image-tag: python-libpvarki:tox
-      
+
     debian-devel_shell:
       runs-on: ubuntu-latest
       steps:
