@@ -38,6 +38,7 @@ def tls_env_variables(datadir: Path, monkeysession: pytest.MonkeyPatch) -> Gener
 @pytest_asyncio.fixture()
 async def test_server(datadir: Path) -> AsyncGenerator[str, None]:
     """Simple tls test server"""
+    # FIXME: This blows up on 3.10+
     bind_port = random.randint(1000, 64000)  # nosec
     hostname = "mtls.localmaeher.pvarki.fi"
     persistentdir = datadir / "persistent"
