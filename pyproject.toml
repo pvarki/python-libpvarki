@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "libpvarki"
-version = "1.3.2"
+version = "1.4.0"
 description = "Common helpers like standard logging init"
 authors = ["Eero af Heurlin <eero.afheurlin@iki.fi>"]
 homepage = "https://github.com/pvarki/python-libpvarki/"
