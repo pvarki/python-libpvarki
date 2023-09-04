@@ -2,6 +2,7 @@
 from typing import Optional, Tuple
 from pathlib import Path
 import logging
+import ssl
 
 import aiohttp
 
@@ -21,6 +22,8 @@ def get_session(
     async with get_session() as session:
         async with session.get(uri) as resp:
             resp.raise_for_status()"""
-    conn = aiohttp.TCPConnector(ssl=get_ssl_context(client_cert_paths, extra_ca_certs_path))
+    # server auth is used to authenticate servers, ie to create client sockets
+    ctx = get_ssl_context(ssl.Purpose.SERVER_AUTH, client_cert_paths, extra_ca_certs_path)
+    conn = aiohttp.TCPConnector(ssl=ctx)
     session = aiohttp.ClientSession(connector=conn)
     return session

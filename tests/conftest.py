@@ -60,7 +60,7 @@ async def test_server(datadir: Path) -> AsyncGenerator[str, None]:
     app = web.Application()
     app.add_routes([web.get("/", handle), web.get("/{name}", handle)])
 
-    ssl_ctx = get_ssl_context(server_cert, extra_ca_certs_path)
+    ssl_ctx = get_ssl_context(ssl.Purpose.CLIENT_AUTH, server_cert, extra_ca_certs_path)
     # Enable client cert as required
     ssl_ctx.verify_mode = ssl.CERT_REQUIRED
 
