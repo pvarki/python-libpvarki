@@ -33,7 +33,7 @@ def get_ssl_context(
     LOGGER.info("Loading client cert from {} and {}".format(client_cert_path, client_key_path))
     ssl_ctx.load_cert_chain(client_cert_path, client_key_path)
     LOGGER.info("Loading local CA certs from {}".format(extra_ca_certs_path))
-    for cafile in extra_ca_certs_path.iterdir():
+    for cafile in extra_ca_certs_path.glob(CONFIG("LOCAL_CA_CERTS_GLOB", default="*ca*.pem")):
         if not cafile.is_file():
             continue
         LOGGER.debug("Adding cert {}".format(cafile))
