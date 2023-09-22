@@ -1,6 +1,7 @@
 """Quick and dirty fastapi test app"""
 from typing import Mapping, Any
 import logging
+import json
 
 from fastapi import FastAPI, Depends
 
@@ -44,3 +45,7 @@ async def client_instruction_fragment(
     _ = certdn
     result = UserInstructionFragment(html=f"<p>Hello {user.callsign}!</p>")
     return result
+
+
+if __name__ == "__main__":
+    print(json.dumps(APP.openapi()))
