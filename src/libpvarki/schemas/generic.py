@@ -5,7 +5,7 @@ from pydantic import Field, Extra
 from pydantic.main import BaseModel  # pylint: disable=E0611 # false positive
 
 
-class OperationResultResponse(BaseModel):
+class OperationResultResponse(BaseModel):  # pylint: disable=too-few-public-methods
     """Communicate result of operation"""
 
     success: bool = Field(description="Was the operation a success, used in addition to http status code")

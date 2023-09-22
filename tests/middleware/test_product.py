@@ -22,7 +22,7 @@ def create_user_dict(callsign: str) -> Dict[str, str]:
 def test_operresult_validationfail() -> None:
     """Test that OperationResultResponse can be encoded and decoded"""
     with pytest.raises(ValidationError):
-        _pcresp = OperationResultResponse.model_validate(
+        _pcresp = OperationResultResponse.parse_obj(
             {
                 "success": "dummy",
                 "error": False,
@@ -32,34 +32,34 @@ def test_operresult_validationfail() -> None:
 
 def test_usercrud_encdec() -> None:
     """Test that UserCRUDRequest can be encoded and decoded"""
-    pdcrud = UserCRUDRequest.model_validate(create_user_dict("KETTU11b"))
-    encoded = pdcrud.model_dump_json()
-    decoded = UserCRUDRequest.model_validate_json(encoded)
+    pdcrud = UserCRUDRequest.parse_obj(create_user_dict("KETTU11b"))
+    encoded = pdcrud.json()
+    decoded = UserCRUDRequest.parse_raw(encoded)
     assert decoded.uuid == pdcrud.uuid
 
 
 def test_operresult_encdec() -> None:
     """Test that OperationResultResponse can be encoded and decoded"""
-    pcresp = OperationResultResponse.model_validate(
+    pcresp = OperationResultResponse.parse_obj(
         {
             "success": False,
             "error": "Dummy",
         }
     )
-    encoded = pcresp.model_dump_json()
-    decoded = OperationResultResponse.model_validate_json(encoded)
+    encoded = pcresp.json()
+    decoded = OperationResultResponse.parse_raw(encoded)
     assert decoded.error == pcresp.error
 
 
 def test_instruction_encdec() -> None:
     """Test that UserInstructionFragment can be encoded and decoded"""
-    pdinstr = UserInstructionFragment.model_validate(
+    pdinstr = UserInstructionFragment.parse_obj(
         {
             "html": "<p>Hello world!</p>",
         }
     )
-    encoded = pdinstr.model_dump_json()
-    decoded = UserInstructionFragment.model_validate_json(encoded)
+    encoded = pdinstr.json()
+    decoded = UserInstructionFragment.parse_raw(encoded)
     assert decoded.html == pdinstr.html
 
 
@@ -85,15 +85,3 @@ def test_create(norppa11: Dict[str, str], mtlsclient: TestClient) -> None:
     payload = resp.json()
     assert "success" in payload
     assert payload["success"]
-
-
-def test_openapijson(mtlsclient: TestClient) -> None:
-    """Check that we can fetch the JSON"""
-    resp = mtlsclient.get("/middleware/openapi.json")
-    assert resp.status_code == 200
-
-
-def test_openapi_docs(mtlsclient: TestClient) -> None:
-    """Check that we can fetch the dcos"""
-    resp = mtlsclient.get("/middleware/docs")
-    assert resp.status_code == 200

@@ -24,6 +24,13 @@ def test_rest() -> None:
     check_schema(schema)
 
 
+def test_openapi_docs() -> None:
+    """Check that we can fetch the dcos"""
+    client = TestClient(APP)
+    resp = client.get("/middleware/docs")
+    assert resp.status_code == 200
+
+
 def test_python() -> None:
     """Check that we can get the schema via python API"""
     schema = APP.openapi()
