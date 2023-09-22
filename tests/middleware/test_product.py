@@ -1,6 +1,7 @@
 """Test product schema endpoints"""
 from typing import Dict
 import uuid
+import logging
 
 import pytest
 from fastapi.testclient import TestClient
@@ -12,6 +13,7 @@ from .test_middleware import mtlsclient  # pylint: disable=W0611
 
 
 # pylint: disable=W0621
+LOGGER = logging.getLogger(__name__)
 
 
 def create_user_dict(callsign: str) -> Dict[str, str]:
@@ -85,3 +87,13 @@ def test_create(norppa11: Dict[str, str], mtlsclient: TestClient) -> None:
     payload = resp.json()
     assert "success" in payload
     assert payload["success"]
+
+
+def test_create_extrafields(norppa11: Dict[str, str], mtlsclient: TestClient) -> None:
+    """Check that adding user works"""
+    norppa11["nosuechfield"] = "Trololoo"
+    resp = mtlsclient.post("/api/product/user/created", json=norppa11)
+    LOGGER.debug("resp={}".format(resp))
+    assert resp.status_code == 422
+    payload = resp.json()
+    LOGGER.debug("payload={}".format(payload))
