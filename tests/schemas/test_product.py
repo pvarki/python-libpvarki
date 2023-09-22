@@ -1,11 +1,5 @@
 """Test product schemas"""
-from libpvarki.schemas.product import OperationResultResponse, UserInstructionFragment, UserCRUDRequest
-
-
-def test_result() -> None:
-    """Test constructing OperationResultResponse"""
-    res = OperationResultResponse(success=True)
-    assert res.model_dump()["success"]
+from libpvarki.schemas.product import UserInstructionFragment, UserCRUDRequest
 
 
 def test_fragment() -> None:

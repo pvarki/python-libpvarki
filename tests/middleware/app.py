@@ -5,7 +5,8 @@ import logging
 from fastapi import FastAPI, Depends
 
 from libpvarki.middleware import MTLSHeader, DNDict
-from libpvarki.schemas.product import UserCRUDRequest, OperationResultResponse, UserInstructionFragment
+from libpvarki.schemas.product import UserCRUDRequest, UserInstructionFragment
+from libpvarki.schemas.generic import OperationResultResponse
 
 LOGGER = logging.getLogger(__name__)
 APP = FastAPI(docs_url="/middleware/docs", openapi_url="/middleware/openapi.json")

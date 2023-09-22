@@ -5,14 +5,7 @@ from pydantic import Field
 from pydantic.main import BaseModel  # pylint: disable=E0611 # false positive
 
 # pylint: disable=too-few-public-methods
-
-
-class OperationResultResponse(BaseModel, extra="forbid"):
-    """Communicate result of operation"""
-
-    success: bool = Field(description="Was the operation a success, used in addition to http status code")
-    extra: Optional[str] = Field(description="Extra information", default=None, json_schema_extra={"nullable": True})
-    error: Optional[str] = Field(description="Error message if any", default=None, json_schema_extra={"nullable": True})
+from .generic import OperationResultResponse  # pylint: disable=W0611 # For backwards compatibility
 
 
 class UserCRUDRequest(BaseModel, extra="forbid"):
@@ -32,3 +25,11 @@ class UserInstructionFragment(BaseModel, extra="forbid"):
         default=None,
         json_schema_extra={"nullable": True},
     )
+
+
+class ReadyRequest(BaseModel):  # pylint: disable=too-few-public-methods
+    """Indicate product API readiness"""
+
+    product: str = Field(description="Product name")
+    apiurl: str = Field(description="Product API URL")
+    url: str = Field(description="Product UI URL")
