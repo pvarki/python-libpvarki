@@ -1,11 +1,13 @@
 """Quick and dirty fastapi test app"""
 from typing import Mapping, Any
 import logging
+import json
 
 from fastapi import FastAPI, Depends
 
 from libpvarki.middleware import MTLSHeader, DNDict
-from libpvarki.schemas.product import UserCRUDRequest, OperationResultResponse, UserInstructionFragment
+from libpvarki.schemas.product import UserCRUDRequest, UserInstructionFragment
+from libpvarki.schemas.generic import OperationResultResponse
 
 LOGGER = logging.getLogger(__name__)
 APP = FastAPI(docs_url="/middleware/docs", openapi_url="/middleware/openapi.json")
@@ -43,3 +45,7 @@ async def client_instruction_fragment(
     _ = certdn
     result = UserInstructionFragment(html=f"<p>Hello {user.callsign}!</p>")
     return result
+
+
+if __name__ == "__main__":
+    print(json.dumps(APP.openapi()))
