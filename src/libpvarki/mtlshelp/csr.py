@@ -1,5 +1,5 @@
 """Create keys and CSRs"""
-from typing import Mapping, Sequence
+from typing import Mapping, Sequence, Tuple
 from pathlib import Path
 import logging
 import stat
@@ -11,6 +11,29 @@ from OpenSSL import crypto  # FIXME: use cryptography instead of pyOpenSSL
 LOGGER = logging.getLogger(__name__)
 KTYPE_NAMES = {getattr(crypto, name): name.replace("TYPE_", "") for name in dir(crypto) if name.startswith("TYPE_")}
 KPTYPE = crypto.PKey
+PUBDIR_MODE = stat.S_IRWXU | stat.S_IRGRP | stat.S_IROTH | stat.S_IXGRP | stat.S_IXOTH
+PRIVDIR_MODE = stat.S_IRWXU
+
+
+def resolve_filepaths(basedir: Path, nameprefix: str) -> Tuple[Path, Path, Path]:
+    """Returns paths for privkey, pubkey, and csr files (but the files are not created
+
+    creates the parent directories if needed, will create "private" and "public" subdirs under the base
+    if they do not exist, will ensure the directories have sane permissions"""
+    pubdir = basedir / "public"
+    pubdir.mkdir(parents=True, exist_ok=True)
+    # everyone can read this dir, owner can write to it
+    pubdir.chmod(PUBDIR_MODE)
+    pubkeypath = pubdir / f"{nameprefix}.pub"
+    csrpath = pubdir / f"{nameprefix}.csr"
+
+    privdir = basedir / "private"
+    privdir.mkdir(parents=True, exist_ok=True)
+    # Owner can read and write this dir, others have no access
+    privdir.chmod(PRIVDIR_MODE)
+    privkeypath = privdir / f"{nameprefix}.key"
+
+    return privkeypath, pubkeypath, csrpath
 
 
 def create_keypair(privkeypath: Path, pubkeypath: Path, ktype: int = crypto.TYPE_RSA, ksize: int = 4096) -> crypto.PKey:

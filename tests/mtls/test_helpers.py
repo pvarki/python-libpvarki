@@ -15,11 +15,35 @@ from libpvarki.mtlshelp.csr import (
     create_client_csr,
     async_create_server_csr,
     create_server_csr,
+    resolve_filepaths,
 )
 
 LOGGER = logging.getLogger(__name__)
 
 # pylint: disable=W0621
+
+
+def test_resolve_filepaths(nice_tmpdir: str) -> None:
+    """Test the helper"""
+    privpath, pubpath, csrpath = resolve_filepaths(Path(nice_tmpdir), "mytest")
+    assert privpath.name == "mytest.key"
+    assert pubpath.name == "mytest.pub"
+    assert csrpath.name == "mytest.csr"
+
+    pubdir = pubpath.parent
+    assert pubdir.exists()
+    pubstat = pubdir.stat()
+    LOGGER.debug("{} has mode {}".format(pubdir, stat.filemode(pubstat.st_mode)))
+    assert not pubstat.st_mode & stat.S_IWGRP
+    assert not pubstat.st_mode & stat.S_IWOTH
+    assert pubstat.st_mode & (stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
+
+    privdir = privpath.parent
+    assert privdir.exists()
+    privstat = privdir.stat()
+    LOGGER.debug("{} has mode {}".format(privdir, stat.filemode(privstat.st_mode)))
+    assert privstat.st_mode & stat.S_IRWXU
+    assert not privstat.st_mode & (stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
 
 
 def check_keypair(ckp: KPTYPE, privpath: Path, pubpath: Path) -> None:
@@ -34,12 +58,7 @@ def check_keypair(ckp: KPTYPE, privpath: Path, pubpath: Path) -> None:
 
 def create_subdirs(datadir: Path) -> Tuple[Path, Path]:
     """Create the test subdirs"""
-    privdir = datadir / "private"
-    privpath = privdir / "mycert.key"
-    pubdir = datadir / "public"
-    pubpath = pubdir / "mycert.pub"
-    privdir.mkdir(parents=True)
-    pubdir.mkdir(parents=True)
+    privpath, pubpath, _ = resolve_filepaths(datadir, "mycert")
     return privpath, pubpath
 
 
