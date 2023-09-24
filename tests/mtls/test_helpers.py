@@ -1,16 +1,28 @@
 """Test the helper functions"""
-from typing import Any, Tuple
+from typing import Tuple, AsyncGenerator
 from pathlib import Path
 import logging
 import stat
 
+import cryptography.x509
 import pytest
-from libpvarki.mtlshelp.csr import create_keypair, async_create_keypair
+import pytest_asyncio
+from libpvarki.mtlshelp.csr import (
+    create_keypair,
+    async_create_keypair,
+    KPTYPE,
+    async_create_client_csr,
+    create_client_csr,
+    async_create_server_csr,
+    create_server_csr,
+)
 
 LOGGER = logging.getLogger(__name__)
 
+# pylint: disable=W0621
 
-def check_keypair(ckp: Any, privpath: Path, pubpath: Path) -> None:
+
+def check_keypair(ckp: KPTYPE, privpath: Path, pubpath: Path) -> None:
     """Do the checks"""
     assert ckp
     assert privpath.exists()
@@ -44,3 +56,57 @@ async def test_keypair_create_async(nice_tmpdir: str) -> None:
     privpath, pubpath = create_subdirs(Path(nice_tmpdir))
     ckp = await async_create_keypair(privpath, pubpath, ksize=1024)  # small key to save time
     check_keypair(ckp, privpath, pubpath)
+
+
+@pytest_asyncio.fixture
+async def keypair(nice_tmpdir: str) -> AsyncGenerator[Tuple[KPTYPE, Path, Path], None]:
+    """Fixture to create keypair"""
+    privpath, pubpath = create_subdirs(Path(nice_tmpdir))
+    ckp = await async_create_keypair(privpath, pubpath, ksize=1024)  # small key to save time
+    check_keypair(ckp, privpath, pubpath)
+    yield ckp, privpath, pubpath
+
+
+def check_csr(pemdata: str, expct_cn: str) -> None:
+    """Check the CSR"""
+    assert pemdata.startswith("-----BEGIN CERTIFICATE REQUEST-----\nMII")
+    parsed = cryptography.x509.load_pem_x509_csr(pemdata.encode("utf-8"))
+    dname = parsed.subject.rfc4514_string()
+    LOGGER.debug("dname: {}".format(dname))
+    assert f"CN={expct_cn}" in dname
+
+
+@pytest.mark.asyncio
+async def test_create_client_csr_async(keypair: Tuple[KPTYPE, Path, Path]) -> None:
+    """Test client CSR creation"""
+    ckp, _privpath, pubpath = keypair
+    csrpath = pubpath.parent / "myname.csr"
+    pemdata = await async_create_client_csr(ckp, csrpath, {"CN": "ROTTA03b"})
+    check_csr(pemdata, expct_cn="ROTTA03b")
+
+
+@pytest.mark.asyncio
+async def test_create_client_csr_sync(keypair: Tuple[KPTYPE, Path, Path]) -> None:
+    """Test client CSR creation with sync method (the fixture is async so this must be too)"""
+    ckp, _privpath, pubpath = keypair
+    csrpath = pubpath.parent / "myname.csr"
+    pemdata = create_client_csr(ckp, csrpath, {"CN": "ROTTA03b"})
+    check_csr(pemdata, expct_cn="ROTTA03b")
+
+
+@pytest.mark.asyncio
+async def test_create_server_csr_async(keypair: Tuple[KPTYPE, Path, Path]) -> None:
+    """Test server CSR creation"""
+    ckp, _privpath, pubpath = keypair
+    csrpath = pubpath.parent / "myname.csr"
+    pemdata = await async_create_server_csr(ckp, csrpath, ["localmaeher.pvarki.fi", "IP:127.0.0.1"])
+    check_csr(pemdata, expct_cn="localmaeher.pvarki.fi")
+
+
+@pytest.mark.asyncio
+async def test_create_sever_csr_sync(keypair: Tuple[KPTYPE, Path, Path]) -> None:
+    """Test server CSR creation (the fixture is async so this must be too)"""
+    ckp, _privpath, pubpath = keypair
+    csrpath = pubpath.parent / "myname.csr"
+    pemdata = create_server_csr(ckp, csrpath, ["localmaeher.pvarki.fi", "IP:127.0.0.1"])
+    check_csr(pemdata, expct_cn="localmaeher.pvarki.fi")
