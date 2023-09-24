@@ -7,7 +7,7 @@ import random
 
 import pytest
 import pytest_asyncio
-from libadvian.testhelpers import monkeysession  # pylint: disable=W0611
+from libadvian.testhelpers import nice_tmpdir, monkeysession  # pylint: disable=W0611
 from libadvian.logging import init_logging
 from aiohttp import web
 
