@@ -2,6 +2,7 @@
 from pathlib import Path
 import logging
 import stat
+import asyncio
 
 from OpenSSL import crypto  # FIXME: use cryptography instead of pyOpenSSL
 
@@ -33,3 +34,10 @@ def create_keypair(privkeypath: Path, pubkeypath: Path, ktype: int = crypto.TYPE
     pubkeypath.write_bytes(crypto.dump_publickey(crypto.FILETYPE_PEM, ckp))
     pubkeypath.chmod(stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)  # everyone can read
     return ckp
+
+
+async def async_create_keypair(
+    privkeypath: Path, pubkeypath: Path, ktype: int = crypto.TYPE_RSA, ksize: int = 4096
+) -> crypto.PKey:
+    """Async wrapper for create_keypair see it for details"""
+    return await asyncio.get_event_loop().run_in_executor(None, create_keypair, privkeypath, pubkeypath, ktype, ksize)
