@@ -4,4 +4,4 @@ from libpvarki import __version__
 
 def test_version() -> None:
     """Make sure version matches expected"""
-    assert __version__ == "1.6.0"
+    assert __version__ == "1.7.0"

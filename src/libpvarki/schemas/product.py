@@ -30,6 +30,7 @@ class UserCRUDRequest(BaseModel):
         }
 
 
+# FIXME: The spec for these will be changed
 class UserInstructionFragment(BaseModel):
     """Product instructions for user"""
 
@@ -73,5 +74,25 @@ class ReadyRequest(BaseModel):  # pylint: disable=too-few-public-methods
                     "apiurl": "https://tak.sleepy-sloth.pvarki.fi:4625/",
                     "url": "https://tak.sleepy-sloth.pvarki.fi:8443/",
                 },
+            ]
+        }
+
+
+class ProductHealthCheckResponse(BaseModel):
+    """Healthcheck response for product integration apis
+
+    The extra info might be used by a human to debug things but RASENMAEHER will not use it"""
+
+    healthy: bool = Field(description="Everything is good, ready to serve")
+    extra: Optional[str] = Field(description="Extra information", default=None, json_schema_extra={"nullable": True})
+
+    class Config:  # pylint: disable=too-few-public-methods
+        """Example values for schema"""
+
+        extra = Extra.forbid
+        schema_extra = {
+            "examples": [
+                {"healthy": True},
+                {"healthy": False, "extra": "Things went wrong"},
             ]
         }
