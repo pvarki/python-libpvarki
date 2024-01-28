@@ -6,7 +6,7 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
-async def call_cmd(cmd: str, timeout: float = 2.5) -> Tuple[int, str, str]:
+async def call_cmd(cmd: str, timeout: float = 2.5, *, stderr_warn: bool = True) -> Tuple[int, str, str]:
     """Do the boilerplate for calling cmd and returning the exit code and output as strings"""
     LOGGER.debug("Calling create_subprocess_shell(({})".format(cmd))
     process = await asyncio.create_subprocess_shell(
@@ -17,7 +17,7 @@ async def call_cmd(cmd: str, timeout: float = 2.5) -> Tuple[int, str, str]:
     out, err = await asyncio.wait_for(process.communicate(), timeout=timeout)
     out_str = out.decode("utf-8")
     err_str = err.decode("utf-8")
-    if err:
+    if err and stderr_warn:
         LOGGER.warning("{} stderr: {}".format(cmd, err_str))
     LOGGER.info(out_str)
     assert isinstance(process.returncode, int)  # at this point it is, keep mypy happy
