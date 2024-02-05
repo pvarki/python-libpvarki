@@ -8,7 +8,7 @@ from starlette.config import Config
 
 
 LOGGER = logging.getLogger(__name__)
-CONFIG = Config(".env")
+CONFIG = Config()  # not supporting .env files anymore because https://github.com/encode/starlette/discussions/2446
 
 # https://github.com/miguelgrinberg/python-socketio/discussions/1040 was very helpful
 

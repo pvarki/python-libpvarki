@@ -9,7 +9,7 @@ from cryptography import x509
 
 
 LOGGER = logging.getLogger(__name__)
-CONFIG = Config(".env")
+CONFIG = Config()  # not supporting .env files anymore because https://github.com/encode/starlette/discussions/2446
 DNDict = Mapping[str, str]
 
 
