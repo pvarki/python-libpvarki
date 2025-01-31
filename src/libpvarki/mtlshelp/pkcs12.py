@@ -3,7 +3,6 @@ from typing import Optional, Sequence, Union, cast
 import logging
 from pathlib import Path
 
-from libadvian.binpackers import ensure_utf8, ensure_str
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.serialization import (
@@ -27,6 +26,13 @@ PKCS12KEYTYPES = (
     ed25519.Ed25519PrivateKey,
     ed448.Ed448PrivateKey,
 )
+
+
+def _ensure_utf8(instr: Union[bytes, str]) -> bytes:
+    """Make sure input is bytes, encode UTF-8 if not."""
+    if isinstance(instr, str):
+        return instr.encode("utf-8")
+    return instr
 
 
 def serialize_legacy_pkcs12(
@@ -56,9 +62,11 @@ def get_src_bytes(certsrc: Union[bytes, Path, str]) -> bytes:
     """Get the specified source as bytes can be path/pathlike or just the bytes as-is"""
     if isinstance(certsrc, Path):
         return certsrc.read_bytes()
-    if ensure_str(certsrc).startswith("-----BEGIN "):
-        return ensure_utf8(certsrc)
-    certpath = Path(ensure_str(certsrc))
+    if isinstance(certsrc, bytes):
+        certsrc = certsrc.decode("utf-8")
+    if certsrc.startswith("-----BEGIN "):
+        return _ensure_utf8(certsrc)
+    certpath = Path(certsrc)
     if certpath.exists():
         return certpath.read_bytes()
     raise ValueError(f"Could not resolve {certsrc!r}")
@@ -92,7 +100,7 @@ def convert_pem_to_pkcs12(
         key = None
     else:
         if keypassword is not None:
-            keypassword = ensure_utf8(keypassword)
+            keypassword = _ensure_utf8(keypassword)
         key = load_pem_private_key(get_src_bytes(keysrc), keypassword)
         LOGGER.debug("Got key {}".format(key))
         if not isinstance(key, PKCS12KEYTYPES):
@@ -102,9 +110,9 @@ def convert_pem_to_pkcs12(
         friendlyname = b""
 
     return serialize_legacy_pkcs12(
-        ensure_utf8(friendlyname),
+        _ensure_utf8(friendlyname),
         cast(Optional[pkcs12.PKCS12PrivateKeyTypes], key),
         main_cert,
         other_certs,
-        ensure_utf8(p12password),
+        _ensure_utf8(p12password),
     )
