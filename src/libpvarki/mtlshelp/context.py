@@ -17,7 +17,7 @@ def get_ca_context(
     purpose: ssl.Purpose,
     extra_ca_certs_path: Optional[Path] = None,
 ) -> ssl.SSLContext:
-    """Get  SSL/TLS context with our local CA certs"""
+    """Get SSL/TLS context with our local CA certs"""
     LOGGER.debug("ssl.create_default_context(purpose={})".format(purpose))
     ssl_ctx = ssl.create_default_context(purpose=purpose)
     if not extra_ca_certs_path:
@@ -36,7 +36,7 @@ def get_ssl_context(
     client_cert_paths: Optional[Tuple[Path, Path]] = None,
     extra_ca_certs_path: Optional[Path] = None,
 ) -> ssl.SSLContext:
-    """Get  SSL/TLS context with our local CA certs and client auth,
+    """Get SSL/TLS context with our local CA certs and client auth,
     if the cert paths are not set ENV or defaults will be used
 
     You can use this to create a server context too, put server cert and key to client paths"""
