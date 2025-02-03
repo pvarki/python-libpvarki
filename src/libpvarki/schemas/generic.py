@@ -1,8 +1,7 @@
 """Generic schemas"""
 from typing import Optional
 
-from pydantic import Field, Extra
-from pydantic.main import BaseModel  # pylint: disable=E0611 # false positive
+from pydantic import Field, BaseModel, ConfigDict
 
 
 class OperationResultResponse(BaseModel):  # pylint: disable=too-few-public-methods
@@ -16,14 +15,13 @@ class OperationResultResponse(BaseModel):  # pylint: disable=too-few-public-meth
         json_schema_extra={"nullable": True},
     )
 
-    class Config:  # pylint: disable=too-few-public-methods
-        """Example values for schema"""
-
-        extra = Extra.forbid
-        schema_extra = {
+    model_config = ConfigDict(
+        extra="forbid",
+        json_schema_extra={
             "examples": [
                 {"success": True},
                 {"success": False, "error": "Things went wrong"},
                 {"success": True, "extra": "Tell the user they're awesome"},
-            ]
-        }
+            ],
+        },
+    )
