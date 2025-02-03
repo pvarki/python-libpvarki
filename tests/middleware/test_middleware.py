@@ -14,7 +14,7 @@ LOGGER = logging.getLogger(__name__)
 
 @pytest.fixture
 def mtlsclient() -> Generator[TestClient, None, None]:
-    """Fake the NGinx header"""
+    """Fake the Nginx header"""
     client = TestClient(
         APP,
         headers={

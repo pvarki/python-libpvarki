@@ -1,4 +1,4 @@
-"""FastAPI auth middleware for mTLS proxy-hearer auth"""
+"""FastAPI auth middleware for mTLS proxy-header auth"""
 from typing import Optional, Mapping
 import logging
 
@@ -14,7 +14,7 @@ DNDict = Mapping[str, str]
 
 
 class MTLSHeader(HTTPBase):  # pylint: disable=R0903
-    """Check NGinx injected mTLS header"""
+    """Check Nginx injected mTLS header"""
 
     def __init__(
         self,
