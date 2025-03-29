@@ -29,7 +29,7 @@ async def test_false() -> None:
 
 @pytest.mark.asyncio
 async def test_stdout() -> None:
-    """Test that echo exists with code 0 and ouputs what we expect to stdout"""
+    """Test that echo exists with code 0 and outputs what we expect to stdout"""
     code, stdout, stderr = await call_cmd("echo 'hello world'")
     assert code == 0
     assert stdout == "hello world\n"
@@ -38,7 +38,7 @@ async def test_stdout() -> None:
 
 @pytest.mark.asyncio
 async def test_stderr() -> None:
-    """Test that echo exists with code 0 and ouputs what we expect to stderr"""
+    """Test that echo exists with code 0 and outputs what we expect to stderr"""
     code, stdout, stderr = await call_cmd("echo 'goodbye world' >&2")
     # FIXME: Capture log output and check for the warning
     assert code == 0
@@ -48,7 +48,7 @@ async def test_stderr() -> None:
 
 @pytest.mark.asyncio
 async def test_stderr_nowarn() -> None:
-    """Test that echo exists with code 0 and ouputs what we expect to stderr"""
+    """Test that echo exists with code 0 and outputs what we expect to stderr"""
     code, stdout, stderr = await call_cmd("echo 'goodbye world' >&2", stderr_warn=False)
     # FIXME: Capture log output and check that there is no warning
     assert code == 0

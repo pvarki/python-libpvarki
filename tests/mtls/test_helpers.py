@@ -86,13 +86,13 @@ async def keypair(tmp_path: Path) -> AsyncGenerator[Tuple[KPTYPE, Path, Path], N
     yield ckp, privpath, pubpath
 
 
-def check_csr(pemdata: str, expct_cn: str) -> None:
+def check_csr(pemdata: str, expect_cn: str) -> None:
     """Check the CSR"""
     assert pemdata.startswith("-----BEGIN CERTIFICATE REQUEST-----\nMII")
     parsed = cryptography.x509.load_pem_x509_csr(pemdata.encode("utf-8"))
     dname = parsed.subject.rfc4514_string()
     LOGGER.debug("dname: {}".format(dname))
-    assert f"CN={expct_cn}" in dname
+    assert f"CN={expect_cn}" in dname
 
 
 @pytest.mark.asyncio
@@ -101,7 +101,7 @@ async def test_create_client_csr_async(keypair: Tuple[KPTYPE, Path, Path]) -> No
     ckp, _privpath, pubpath = keypair
     csrpath = pubpath.parent / "myname.csr"
     pemdata = await async_create_client_csr(ckp, csrpath, {"CN": "ROTTA03b"})
-    check_csr(pemdata, expct_cn="ROTTA03b")
+    check_csr(pemdata, expect_cn="ROTTA03b")
 
 
 @pytest.mark.asyncio
@@ -110,7 +110,7 @@ async def test_create_client_csr_sync(keypair: Tuple[KPTYPE, Path, Path]) -> Non
     ckp, _privpath, pubpath = keypair
     csrpath = pubpath.parent / "myname.csr"
     pemdata = create_client_csr(ckp, csrpath, {"CN": "ROTTA03b"})
-    check_csr(pemdata, expct_cn="ROTTA03b")
+    check_csr(pemdata, expect_cn="ROTTA03b")
 
 
 @pytest.mark.asyncio
@@ -119,7 +119,7 @@ async def test_create_server_csr_async(keypair: Tuple[KPTYPE, Path, Path]) -> No
     ckp, _privpath, pubpath = keypair
     csrpath = pubpath.parent / "myname.csr"
     pemdata = await async_create_server_csr(ckp, csrpath, ["localmaeher.pvarki.fi", "IP:127.0.0.1"])
-    check_csr(pemdata, expct_cn="localmaeher.pvarki.fi")
+    check_csr(pemdata, expect_cn="localmaeher.pvarki.fi")
 
 
 @pytest.mark.asyncio
@@ -128,4 +128,4 @@ async def test_create_sever_csr_sync(keypair: Tuple[KPTYPE, Path, Path]) -> None
     ckp, _privpath, pubpath = keypair
     csrpath = pubpath.parent / "myname.csr"
     pemdata = create_server_csr(ckp, csrpath, ["localmaeher.pvarki.fi", "IP:127.0.0.1"])
-    check_csr(pemdata, expct_cn="localmaeher.pvarki.fi")
+    check_csr(pemdata, expect_cn="localmaeher.pvarki.fi")
