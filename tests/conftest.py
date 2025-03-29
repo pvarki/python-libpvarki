@@ -1,5 +1,5 @@
 """pytest automagics"""
-from typing import Generator, AsyncGenerator
+from typing import AsyncGenerator
 import logging
 from pathlib import Path
 import ssl
@@ -7,10 +7,9 @@ import random
 
 import pytest
 import pytest_asyncio
-from libadvian.testhelpers import nice_tmpdir, monkeysession  # pylint: disable=W0611
-from libadvian.logging import init_logging
 from aiohttp import web
 
+from libpvarki.logging import init_logging
 from libpvarki.mtlshelp import get_ssl_context
 
 init_logging(logging.DEBUG)
@@ -25,14 +24,11 @@ def datadir() -> Path:
     return Path(__file__).parent / "data"
 
 
-@pytest.fixture(scope="session", autouse=True)
-def tls_env_variables(datadir: Path, monkeysession: pytest.MonkeyPatch) -> Generator[pytest.MonkeyPatch, None, None]:
+@pytest.fixture(autouse=True)
+def tls_env_variables(datadir: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """Set the TLS paths to env"""
-    monkeysession.setenv("PERSISTENT_DATA_PATH", str(datadir / "persistent"))
-    monkeysession.setenv("LOCAL_CA_CERTS_PATH", str(datadir / "ca_public"))
-
-    yield monkeysession
-    # The teardowns are done automagically
+    monkeypatch.setenv("PERSISTENT_DATA_PATH", str(datadir / "persistent"))
+    monkeypatch.setenv("LOCAL_CA_CERTS_PATH", str(datadir / "ca_public"))
 
 
 @pytest_asyncio.fixture()
