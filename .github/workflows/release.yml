@@ -1,0 +1,30 @@
+name: Create tag for release
+
+on:
+  workflow_dispatch:  # Allow manual triggering
+  push:
+    branches:
+      - main
+
+jobs:
+  tag_release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+      - name: Parse tag to ENV
+        run: |
+          echo RELEASE_TAG=$(poetry version --short) >> ${GITHUB_ENV}
+          cat ${GITHUB_ENV}
+      - uses: rickstaa/action-create-tag@v1
+        if: ${{ !env.ACT }}
+        id: "tag_create"
+        with:
+          tag: ${{ env.RELEASE_TAG }}
+          tag_exists_error: false
