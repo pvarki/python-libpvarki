@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "libpvarki"
-version = "2.0.0"
+version = "2.1.0"
 description = "Common helpers like standard logging init"
 authors = ["Eero af Heurlin <eero.afheurlin@iki.fi>"]
 homepage = "https://github.com/pvarki/python-libpvarki/"
@@ -65,8 +65,6 @@ aiohttp = ">=3.10.2,<4.0"
 aiodns = "^3.0"
 brotli = "^1.0"
 cchardet = { version="^2.1", python="<=3.10"}
-# FIXME: Once everything using this is migrared to cryptography drop the dep
-pyopenssl = ">=23.2"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -82,8 +80,6 @@ pytest-asyncio = ">=0.21,<1.0" # caret behaviour on 0.x is to lock to 0.x.*
 bump2version = "^1.0"
 detect-secrets = "^1.2"
 httpx = ">=0.23,<1.0" # caret behaviour on 0.x is to lock to 0.x.*
-# FIXME: Once everything using pyopenssl is migrared to cryptography drop the dep
-types-pyopenssl = ">=23.2"
 
 [build-system]
 requires = ["poetry-core>=1.2.0"]
