@@ -104,4 +104,4 @@ class ProductDescription(BaseModel):  # pylint: disable=too-few-public-methods
     class Config:  # pylint: disable=too-few-public-methods
         """Pydantic configs"""
 
-        extra = Extra.forbid
+        extra = "forbid"
