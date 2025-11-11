@@ -92,6 +92,7 @@ class ProductHealthCheckResponse(BaseModel):
         },
     )
 
+
 class ProductDescription(BaseModel):  # pylint: disable=too-few-public-methods
     """Description of a product"""
 
