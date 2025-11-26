@@ -56,11 +56,11 @@ omit = ["tests/*"]
 branch = true
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">3.9.1,<4.0"
 ecs-logging = "^2.0"
 fastapi = ">0.89,<1.0" # caret behaviour on 0.x is to lock to 0.x.*
 pydantic= ">=2.0,<3.0"
-cryptography = ">=41.0"
+cryptography = ">=44.0.1"
 aiohttp = ">=3.10.2,<4.0"
 aiodns = "^3.0"
 brotli = "^1.0"
