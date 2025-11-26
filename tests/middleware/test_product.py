@@ -1,4 +1,5 @@
 """Test product schema endpoints"""
+
 from typing import Dict
 import uuid
 import logging

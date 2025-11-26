@@ -1,4 +1,5 @@
 """Generic schemas"""
+
 from typing import Optional
 
 from pydantic import Field, BaseModel, ConfigDict

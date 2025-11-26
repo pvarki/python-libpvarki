@@ -1,4 +1,5 @@
 """Test product schemas"""
+
 from libpvarki.schemas.product import UserInstructionFragment, UserCRUDRequest, ProductHealthCheckResponse
 
 

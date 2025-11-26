@@ -1,4 +1,5 @@
 """Test shell helpers"""
+
 import logging
 import asyncio
 

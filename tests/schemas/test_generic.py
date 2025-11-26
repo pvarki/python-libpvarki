@@ -1,4 +1,5 @@
 """test generic schemas"""
+
 import pytest
 from pydantic import ValidationError
 from libpvarki.schemas.generic import OperationResultResponse

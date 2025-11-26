@@ -1,4 +1,5 @@
 """Things common for all handlers"""
+
 from typing import Optional, Mapping, Any, Dict, cast
 import os
 import json

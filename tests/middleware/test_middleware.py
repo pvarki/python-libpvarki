@@ -1,4 +1,5 @@
 """Test the middleware"""
+
 from typing import Generator
 import logging
 
