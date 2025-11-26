@@ -1,4 +1,5 @@
 """Test that we can generate the openapi spec"""
+
 from typing import Dict, Any
 import logging
 

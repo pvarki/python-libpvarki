@@ -1,4 +1,5 @@
 """Helper to convert PEM to PKCS12 (legacy format)"""
+
 from typing import Optional, Sequence, Union, cast
 import logging
 from pathlib import Path

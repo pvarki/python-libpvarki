@@ -1,4 +1,5 @@
 """Pydantic schemas for product integration APIs"""
+
 from typing import Optional
 
 from pydantic import Field, BaseModel, ConfigDict

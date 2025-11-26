@@ -1,4 +1,5 @@
 """Test the pkcs12 helper"""
+
 from typing import Tuple
 import logging
 from pathlib import Path

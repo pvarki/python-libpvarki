@@ -1,4 +1,5 @@
 """FastAPI auth middleware for mTLS proxy-header auth"""
+
 from typing import Optional, Mapping
 import logging
 

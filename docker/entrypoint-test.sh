@@ -1,5 +1,6 @@
 #!/bin/bash -l
 set -e
+# shellcheck disable=SC1091
 source /.venv/bin/activate
 if [ "$#" -eq 0 ]; then
   # Kill cache, pytest complains about it if running local and docker tests in mapped volume

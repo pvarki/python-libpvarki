@@ -1,4 +1,5 @@
 """Test product schema endpoints"""
+
 from typing import Dict
 import uuid
 import logging
@@ -24,7 +25,7 @@ def create_user_dict(callsign: str) -> Dict[str, str]:
 def test_operresult_validationfail() -> None:
     """Test that OperationResultResponse can be encoded and decoded"""
     with pytest.raises(ValidationError):
-        _pcresp = OperationResultResponse.parse_obj(
+        _pcresp = OperationResultResponse.model_validate(
             {
                 "success": "dummy",
                 "error": False,
@@ -34,7 +35,7 @@ def test_operresult_validationfail() -> None:
 
 def test_usercrud_encdec() -> None:
     """Test that UserCRUDRequest can be encoded and decoded"""
-    pdcrud = UserCRUDRequest.parse_obj(create_user_dict("KETTU11b"))
+    pdcrud = UserCRUDRequest.model_validate(create_user_dict("KETTU11b"))
     encoded = pdcrud.json()
     decoded = UserCRUDRequest.parse_raw(encoded)
     assert decoded.uuid == pdcrud.uuid
@@ -42,7 +43,7 @@ def test_usercrud_encdec() -> None:
 
 def test_operresult_encdec() -> None:
     """Test that OperationResultResponse can be encoded and decoded"""
-    pcresp = OperationResultResponse.parse_obj(
+    pcresp = OperationResultResponse.model_validate(
         {
             "success": False,
             "error": "Dummy",
@@ -55,7 +56,7 @@ def test_operresult_encdec() -> None:
 
 def test_instruction_encdec() -> None:
     """Test that UserInstructionFragment can be encoded and decoded"""
-    pdinstr = UserInstructionFragment.parse_obj(
+    pdinstr = UserInstructionFragment.model_validate(
         {
             "html": "<p>Hello world!</p>",
         }

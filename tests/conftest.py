@@ -1,4 +1,5 @@
 """pytest automagics"""
+
 from typing import AsyncGenerator
 import logging
 from pathlib import Path
