@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref != 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Check version tag
         run: |
           curl -f https://raw.githubusercontent.com/pvarki/python-libpvarki/main/pyproject.toml -o /tmp/main_pyproject.toml || touch /tmp/main_pyproject.toml
@@ -20,7 +20,7 @@ jobs:
   lint:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"  # TODO: the current pylint version fails on py3.12
@@ -38,7 +38,7 @@ jobs:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
