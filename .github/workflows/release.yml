@@ -1,4 +1,4 @@
-name: Create tag for release
+name: Tag release and publish to Nexus
 
 on:
   workflow_dispatch:  # Allow manual triggering
