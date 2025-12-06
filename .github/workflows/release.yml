@@ -1,4 +1,4 @@
-name: Create tag for release
+name: Tag release and publish to Nexus
 
 on:
   workflow_dispatch:  # Allow manual triggering
@@ -13,7 +13,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -28,3 +28,29 @@ jobs:
         with:
           tag: ${{ env.RELEASE_TAG }}
           tag_exists_error: false
+
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry twine
+      - name: build dist
+        run: |
+          poetry build -f sdist
+          poetry build -f wheel
+      - name: Upload
+        if: ${{ !env.ACT }}
+        env:
+          TWINE_REPOSITORY_URL: https://nexus.dev.pvarki.fi/repository/pypilocal/
+          TWINE_USERNAME: nexusbot
+          TWINE_PASSWORD: ${{ secrets.NEXUSBOT_PAT }}
+          TWINE_NON_INTERACTIVE: 1
+        run: |
+          twine upload dist/*
