@@ -8,7 +8,6 @@ repository = "https://github.com/pvarki/python-libpvarki/"
 license = "MIT"
 readme = "README.rst"
 
-
 [tool.black]
 line-length = 120
 target-version = ['py38']
@@ -67,8 +66,7 @@ aiohttp = ">=3.10.2,<4.0"
 aiodns = "^3.0"
 brotli = "^1.0"
 cchardet = { version="^2.1", python="<=3.10"}
-# FIXME: Once everything using this is migrared to cryptography drop the dep
-pyopenssl = ">=23.2"
+libadvian = { git = "https://gitlab.com/advian-oss/python-libadvian.git", branch = "log_levels" }
 
 
 [tool.poetry.group.dev.dependencies]
