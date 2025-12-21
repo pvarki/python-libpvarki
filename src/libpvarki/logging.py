@@ -74,9 +74,11 @@ class AddExtrasFilter(logging.Filter):  # pylint: disable=R0903
 
     def filter(self, record: logging.LogRecord) -> bool:
         """Add the extras then call parent filter"""
-        for key in self.add_extras:
-            setattr(record, key, self.add_extras[key])
-        return super().filter(record)
+        for key, value in self.add_extras.items():
+            setattr(record, key, value)
+
+        result = super().filter(record)
+        return bool(result)
 
 
 def init_logging(level: int = logging.INFO) -> None:
