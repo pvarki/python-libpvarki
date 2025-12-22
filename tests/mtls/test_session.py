@@ -1,4 +1,5 @@
 """Test session init"""
+
 from pathlib import Path
 import logging
 

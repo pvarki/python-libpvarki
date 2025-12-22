@@ -1,4 +1,5 @@
 """Test the helper functions"""
+
 from typing import Tuple, AsyncGenerator
 from pathlib import Path
 import logging
@@ -23,9 +24,9 @@ LOGGER = logging.getLogger(__name__)
 # pylint: disable=W0621
 
 
-def test_resolve_filepaths(nice_tmpdir: str) -> None:
+def test_resolve_filepaths(tmp_path: Path) -> None:
     """Test the helper"""
-    privpath, pubpath, csrpath = resolve_filepaths(Path(nice_tmpdir), "mytest")
+    privpath, pubpath, csrpath = resolve_filepaths(tmp_path, "mytest")
     assert privpath.name == "mytest.key"
     assert pubpath.name == "mytest.pub"
     assert csrpath.name == "mytest.csr"
@@ -62,37 +63,37 @@ def create_subdirs(datadir: Path) -> Tuple[Path, Path]:
     return privpath, pubpath
 
 
-def test_keypair_create(nice_tmpdir: str) -> None:
+def test_keypair_create(tmp_path: Path) -> None:
     """Test normal create case"""
-    privpath, pubpath = create_subdirs(Path(nice_tmpdir))
+    privpath, pubpath = create_subdirs(tmp_path)
     ckp = create_keypair(privpath, pubpath, ksize=1024)  # small key to save time
     check_keypair(ckp, privpath, pubpath)
 
 
 @pytest.mark.asyncio
-async def test_keypair_create_async(nice_tmpdir: str) -> None:
+async def test_keypair_create_async(tmp_path: Path) -> None:
     """Test the async wrapper"""
-    privpath, pubpath = create_subdirs(Path(nice_tmpdir))
+    privpath, pubpath = create_subdirs(tmp_path)
     ckp = await async_create_keypair(privpath, pubpath, ksize=1024)  # small key to save time
     check_keypair(ckp, privpath, pubpath)
 
 
 @pytest_asyncio.fixture
-async def keypair(nice_tmpdir: str) -> AsyncGenerator[Tuple[KPTYPE, Path, Path], None]:
+async def keypair(tmp_path: Path) -> AsyncGenerator[Tuple[KPTYPE, Path, Path], None]:
     """Fixture to create keypair"""
-    privpath, pubpath = create_subdirs(Path(nice_tmpdir))
+    privpath, pubpath = create_subdirs(tmp_path)
     ckp = await async_create_keypair(privpath, pubpath, ksize=1024)  # small key to save time
     check_keypair(ckp, privpath, pubpath)
     yield ckp, privpath, pubpath
 
 
-def check_csr(pemdata: str, expct_cn: str) -> None:
+def check_csr(pemdata: str, expect_cn: str) -> None:
     """Check the CSR"""
     assert pemdata.startswith("-----BEGIN CERTIFICATE REQUEST-----\nMII")
     parsed = cryptography.x509.load_pem_x509_csr(pemdata.encode("utf-8"))
     dname = parsed.subject.rfc4514_string()
     LOGGER.debug("dname: {}".format(dname))
-    assert f"CN={expct_cn}" in dname
+    assert f"CN={expect_cn}" in dname
 
 
 @pytest.mark.asyncio
@@ -101,7 +102,7 @@ async def test_create_client_csr_async(keypair: Tuple[KPTYPE, Path, Path]) -> No
     ckp, _privpath, pubpath = keypair
     csrpath = pubpath.parent / "myname.csr"
     pemdata = await async_create_client_csr(ckp, csrpath, {"CN": "ROTTA03b"})
-    check_csr(pemdata, expct_cn="ROTTA03b")
+    check_csr(pemdata, expect_cn="ROTTA03b")
 
 
 @pytest.mark.asyncio
@@ -110,7 +111,7 @@ async def test_create_client_csr_sync(keypair: Tuple[KPTYPE, Path, Path]) -> Non
     ckp, _privpath, pubpath = keypair
     csrpath = pubpath.parent / "myname.csr"
     pemdata = create_client_csr(ckp, csrpath, {"CN": "ROTTA03b"})
-    check_csr(pemdata, expct_cn="ROTTA03b")
+    check_csr(pemdata, expect_cn="ROTTA03b")
 
 
 @pytest.mark.asyncio
@@ -119,7 +120,7 @@ async def test_create_server_csr_async(keypair: Tuple[KPTYPE, Path, Path]) -> No
     ckp, _privpath, pubpath = keypair
     csrpath = pubpath.parent / "myname.csr"
     pemdata = await async_create_server_csr(ckp, csrpath, ["localmaeher.pvarki.fi", "IP:127.0.0.1"])
-    check_csr(pemdata, expct_cn="localmaeher.pvarki.fi")
+    check_csr(pemdata, expect_cn="localmaeher.pvarki.fi")
 
 
 @pytest.mark.asyncio
@@ -128,4 +129,4 @@ async def test_create_sever_csr_sync(keypair: Tuple[KPTYPE, Path, Path]) -> None
     ckp, _privpath, pubpath = keypair
     csrpath = pubpath.parent / "myname.csr"
     pemdata = create_server_csr(ckp, csrpath, ["localmaeher.pvarki.fi", "IP:127.0.0.1"])
-    check_csr(pemdata, expct_cn="localmaeher.pvarki.fi")
+    check_csr(pemdata, expect_cn="localmaeher.pvarki.fi")

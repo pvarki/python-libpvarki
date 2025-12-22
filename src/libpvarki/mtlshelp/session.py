@@ -1,4 +1,5 @@
 """Wrapper to create a ClientSession with the correct SSL/TLS context things set up"""
+
 from typing import Optional, Tuple
 from pathlib import Path
 import logging

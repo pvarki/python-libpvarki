@@ -1,4 +1,5 @@
 """Test the logging stuff"""
+
 from typing import Any
 import logging
 import datetime
