@@ -3,14 +3,14 @@ PVARKI Audit Logging Module.
 
 Add-on to libpvarki.logging that provides structured audit logging with:
 
-- **AUDIT log level (25)** - Between INFO and WARNING
+- **AUDIT log level** - Above CRITICAL, always visible
 - **Request context propagation** - via ContextVars (async-safe)
 - **Service-to-service propagation** - via HTTP headers
 - **ECS-compliant fields** - works with existing ecs-logging formatter
 
 This module builds on:
 
-- libadvian.logging (base logging, MR #15 adds AUDIT level)
+- libadvian.logging (provides AUDIT level via add_trace_and_audit())
 - libpvarki.logging (ECS formatting via ecs-logging)
 
 Quick Start
@@ -31,11 +31,12 @@ Quick Start
 2. Log audit events in your code::
 
     import logging
-    from libpvarki.auditlogging import audit_log
+    from libpvarki.auditlogging import audit_log, AUDIT
 
     LOGGER = logging.getLogger(__name__)
 
-    LOGGER.audit(
+    LOGGER.log(
+        AUDIT,
         "Certificate issued for user",
         extra=audit_log(
             category="iam",
@@ -86,10 +87,30 @@ service -> service::
 """
 
 import logging
-from typing import Any
 
 # Import existing libpvarki logging (which builds on libadvian)
 from libpvarki.logging import init_logging
+
+# Import AUDIT level from libadvian
+# libadvian.logging.add_trace_and_audit() registers AUDIT = CRITICAL + 5 = 55
+AUDIT: int = logging.CRITICAL + 5  # 55
+
+try:
+    from libadvian.logging import add_trace_and_audit
+
+    # Register TRACE and AUDIT levels (side-effect: adds names into stdlib logging)
+    add_trace_and_audit()
+
+except ImportError:
+    # Fallback: if libadvian doesn't have add_trace_and_audit yet
+    logging.addLevelName(AUDIT, "AUDIT")
+    setattr(logging, "AUDIT", AUDIT)
+else:
+    # In case libadvian registered it, still ensure stdlib has the attribute at runtime.
+    # (mypy won't care; this is runtime ergonomics only)
+    if not hasattr(logging, "AUDIT"):
+        setattr(logging, "AUDIT", AUDIT)
+
 
 # Context management
 from .context import (
@@ -126,57 +147,18 @@ from .propagation import (
 )
 
 
-# =============================================================================
-# AUDIT Level Setup
-# =============================================================================
-
-# AUDIT log level: between INFO (20) and WARNING (30)
-AUDIT = 25
-
-
-def _ensure_audit_level() -> None:
-    """
-    Ensure AUDIT log level is registered with Python logging.
-
-    This provides a fallback for libadvian versions before MR #15 is merged.
-    Once MR #15 is merged and released, libadvian will handle this natively.
-
-    Safe to call multiple times - will not duplicate registration.
-
-    The AUDIT level (25) sits between INFO (20) and WARNING (30),
-    making it visible at INFO level but filterable separately.
-    """
-    if hasattr(logging, "AUDIT"):
-        return  # Already registered by libadvian or previous call
-
-    logging.addLevelName(AUDIT, "AUDIT")
-    setattr(logging, "AUDIT", AUDIT)
-
-    def audit(self: logging.Logger, message: str, *args: Any, **kwargs: Any) -> None:
-        """
-        Log an audit message at level 25.
-
-        Usage::
-
-            LOGGER.audit("Event description", extra=audit_log(...))
-        """
-        if self.isEnabledFor(AUDIT):
-            self._log(AUDIT, message, args, **kwargs)
-
-    logging.Logger.audit = audit  # type: ignore[attr-defined]
-
-
 def init_audit(level: int = logging.INFO) -> None:
     """
     Initialize logging with AUDIT level support.
 
     Call this instead of ``init_logging()`` in services that need audit logging.
-    Sets up the AUDIT level and configures formatters via libpvarki.logging.
+    The AUDIT level (55, above CRITICAL) is always visible regardless of the
+    level parameter - it cannot be accidentally silenced.
 
     Args:
-        level: Minimum log level. Default INFO (20) shows AUDIT (25) events.
+        level: Minimum log level for non-audit messages. Default INFO (20).
                Use logging.DEBUG (10) for verbose output.
-               Use logging.WARNING (30) to suppress AUDIT events.
+               AUDIT events (level 55) are always logged regardless of this setting.
 
     Example::
 
@@ -189,13 +171,7 @@ def init_audit(level: int = logging.INFO) -> None:
         # Or for debugging:
         init_audit(logging.DEBUG)
     """
-    _ensure_audit_level()
     init_logging(level)
-
-
-# Ensure AUDIT level exists on module import
-# This allows LOGGER.audit() to work even before init_audit() is called
-_ensure_audit_level()
 
 
 __all__ = [

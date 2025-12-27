@@ -17,7 +17,7 @@ import uuid
 
 
 @dataclass
-class AuditContext:
+class AuditContext:  # pylint: disable=too-many-instance-attributes
     """
     Container for request-scoped audit context.
 
@@ -95,6 +95,7 @@ def get_audit_context() -> AuditContext:
     return _audit_context.get()
 
 
+# pylint: disable=too-many-arguments
 def set_audit_context(
     trace_id: Optional[str] = None,
     initiator_ip: Optional[str] = None,
@@ -104,7 +105,7 @@ def set_audit_context(
     initiator_cert_cn: Optional[str] = None,
     initiator_session: Optional[str] = None,
     is_propagated: Optional[bool] = None,
-) -> AuditContext:
+) -> AuditContext:  # pylint: disable=too-many-arguments
     """
     Set or update the audit context for the current request.
 

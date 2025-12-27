@@ -20,9 +20,14 @@ Example usage with aiohttp (already a libpvarki dependency)::
             await session.post(url, json=data, headers=headers)
 """
 
-from typing import Dict, Optional, Any
+from __future__ import annotations
+
+from typing import Dict, Optional, TYPE_CHECKING
 
 from .context import get_audit_context
+
+if TYPE_CHECKING:
+    import aiohttp
 
 # Header names for propagation (must match middleware.py)
 HEADER_REQUEST_ID = "X-Request-ID"
@@ -145,7 +150,7 @@ class AuditContextClientMixin:
         return inject_audit_context(headers)
 
 
-def create_audit_trace_config() -> Any:
+def create_audit_trace_config() -> "aiohttp.TraceConfig":
     """
     Create aiohttp TraceConfig that adds audit headers to all requests.
 
@@ -166,14 +171,13 @@ def create_audit_trace_config() -> Any:
             await session.get("http://other-service/api/v1/status")
     """
     try:
-        import aiohttp
+        import aiohttp  # pylint: disable=import-outside-toplevel
 
         async def on_request_start(
-            session: aiohttp.ClientSession,
-            trace_config_ctx: Any,
+            _session: aiohttp.ClientSession,
+            _trace_config_ctx: object,
             params: aiohttp.TraceRequestStartParams,
         ) -> None:
-            """Add audit headers before each request."""
             headers = get_propagation_headers()
             for key, value in headers.items():
                 if key not in params.headers:
@@ -183,8 +187,8 @@ def create_audit_trace_config() -> Any:
         trace_config.on_request_start.append(on_request_start)
         return trace_config
 
-    except ImportError:
+    except ImportError as exc:
         raise ImportError(
             "aiohttp is required for create_audit_trace_config(). "
             "This should already be installed as a libpvarki dependency."
-        )
+        ) from exc

@@ -38,7 +38,7 @@ SERVICE_NAME = os.getenv("SERVICE_NAME", os.getenv("HOSTNAME", "pvarki"))
 SERVICE_VERSION = os.getenv("RELEASE_TAG", os.getenv("SERVICE_VERSION", "unknown"))
 
 
-def audit_log(
+def audit_log(  # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
     category: str,
     action: str,
     outcome: str = "success",

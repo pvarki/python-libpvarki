@@ -5,6 +5,7 @@ Run with: pytest tests/test_auditlogging.py -v
 
 These tests are designed to work within the libpvarki test infrastructure.
 """
+# pylint: disable=redefined-outer-name
 
 import logging
 from typing import Generator, Dict, Any
@@ -14,11 +15,9 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from libpvarki.auditlogging import (
-    init_audit,
     AUDIT,
     AuditMiddleware,
     audit_log,
-    audit_extra,
     audit_authentication,
     audit_iam,
     get_audit_context,
@@ -82,13 +81,15 @@ class TestAuditLevel:
     """Tests for AUDIT log level setup."""
 
     def test_audit_level_constant(self) -> None:
-        """AUDIT level should be 25."""
-        assert AUDIT == 25
+        """AUDIT level should be CRITICAL + 5 (55)."""
+        assert AUDIT == logging.CRITICAL + 5
 
     def test_audit_level_registered(self) -> None:
         """AUDIT level should be registered with logging module."""
         assert hasattr(logging, "AUDIT")
-        assert logging.AUDIT == 25  # type: ignore[attr-defined]
+        audit_val = getattr(logging, "AUDIT")
+        assert isinstance(audit_val, int)
+        assert audit_val == AUDIT
 
     def test_logger_has_audit_method(self) -> None:
         """Logger instances should have audit() method."""
@@ -365,7 +366,6 @@ class TestPropagation:
     def test_propagation_empty_context(self) -> None:
         """Propagation headers should exclude empty values."""
         clear_audit_context()
-        ctx = get_audit_context()
 
         headers = get_propagation_headers()
 

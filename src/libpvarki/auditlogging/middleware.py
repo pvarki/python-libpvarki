@@ -10,7 +10,7 @@ Sets ContextVars that are automatically read by audit_log() helper.
 
 import logging
 import uuid
-from typing import Callable
+from collections.abc import Awaitable, Callable
 
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
@@ -36,27 +36,27 @@ HEADER_INITIATOR_CERT_SERIAL = "X-Initiator-Cert-Serial"
 HEADER_INITIATOR_SESSION = "X-Initiator-Session"
 
 
-def _parse_cn_from_dn(dn: str) -> str:
+def _parse_cn_from_dn(distinguished_name: str) -> str:
     """
     Extract Common Name from Distinguished Name string.
 
     Args:
-        dn: Distinguished Name, e.g., "CN=NORPPA11,O=PVARKI,C=FI"
+        distinguished_name: Distinguished Name, e.g., "CN=NORPPA11,O=PVARKI,C=FI"
 
     Returns:
         The CN value, or empty string if not found.
     """
-    if not dn:
+    if not distinguished_name:
         return ""
 
-    for part in dn.split(","):
+    for part in distinguished_name.split(","):
         part = part.strip()
         if part.upper().startswith("CN="):
             return part[3:]
     return ""
 
 
-class AuditMiddleware(BaseHTTPMiddleware):
+class AuditMiddleware(BaseHTTPMiddleware):  # pylint: disable=too-few-public-methods
     """
     Middleware to extract and set audit context for each request.
 
@@ -82,7 +82,11 @@ class AuditMiddleware(BaseHTTPMiddleware):
         proxy_set_header X-ClientCert-Serial $ssl_client_serial;
     """
 
-    async def dispatch(self, request: Request, call_next: Callable[[Request], Response]) -> Response:
+    async def dispatch(  # pylint: disable=too-many-locals
+        self,
+        request: Request,
+        call_next: Callable[[Request], Awaitable[Response]],
+    ) -> Response:
         """Extract context from headers and process request."""
 
         # === Trace ID (correlation) ===

@@ -5,7 +5,9 @@ import logging
 import stat
 import asyncio
 
-from OpenSSL import crypto  # FIXME: use cryptography instead of pyOpenSSL
+from OpenSSL import crypto  # pylint: disable=import-error
+
+# FIXME: use cryptography instead of pyOpenSSL
 
 
 LOGGER = logging.getLogger(__name__)
