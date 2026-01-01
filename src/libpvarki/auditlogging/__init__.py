@@ -136,6 +136,7 @@ from .helpers import (
     audit_configuration,
     audit_session,
     audit_anomaly,
+    code_fingerprint,
 )
 
 # Service-to-service propagation
@@ -195,6 +196,7 @@ __all__ = [
     "audit_configuration",
     "audit_session",
     "audit_anomaly",
+    "code_fingerprint",
     # Propagation
     "get_propagation_headers",
     "inject_audit_context",

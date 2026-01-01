@@ -28,6 +28,7 @@ Usage::
 
 import os
 from typing import Optional, Dict, Any
+import hashlib
 
 from .context import get_audit_context
 
@@ -38,11 +39,12 @@ SERVICE_NAME = os.getenv("SERVICE_NAME", os.getenv("HOSTNAME", "pvarki"))
 SERVICE_VERSION = os.getenv("RELEASE_TAG", os.getenv("SERVICE_VERSION", "unknown"))
 
 
-def audit_log(  # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
+def audit_log(  # pylint: disable=too-many-arguments, too-many-branches, too-many-locals
     category: str,
     action: str,
+    *,
     outcome: str = "success",
-    # Initiator overrides (normally from context)
+    # Initiator overrides
     initiator_user: Optional[str] = None,
     initiator_role: Optional[str] = None,
     initiator_ip: Optional[str] = None,
@@ -297,3 +299,25 @@ def audit_anomaly(
         error_message=error_message,
         **kwargs,
     )
+
+
+# =============================================================================
+# Fingerprinting function for when we want to log secrets
+# =============================================================================
+
+
+def code_fingerprint(code: str, *, context: str = "generic") -> str:
+    """
+    Generate a non-reversible fingerprint of a code for audit logging.
+
+    Uses SHA256 for correlation only. Never log raw secrets.
+
+    Args:
+        code: Secret value (invite code, OTP, token).
+        context: Domain separation label (e.g. "invitecode", "otp").
+
+    Returns:
+        Short hex fingerprint suitable for logs.
+    """
+    data = f"{context}:{code}".encode("utf-8")
+    return hashlib.sha256(data).hexdigest()[:12]

@@ -1,5 +1,5 @@
 """Things common for all handlers"""
-from typing import Optional, Mapping, Any, Dict, cast
+from typing import Optional, Mapping, Any, Dict, Callable, cast
 import os
 import json
 import logging
@@ -15,7 +15,7 @@ import ecs_logging
 class UTCISOFormatter(logging.Formatter):
     """Output timestamps in UTC ISO timestamps"""
 
-    converter = time.gmtime
+    converter: Callable[[Optional[float]], time.struct_time] = time.gmtime
 
     def formatTime(self, record: logging.LogRecord, datefmt: Optional[str] = None) -> str:
         converted = datetime.datetime.fromtimestamp(record.created, tz=datetime.timezone.utc)

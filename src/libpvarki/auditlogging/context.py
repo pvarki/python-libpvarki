@@ -95,7 +95,7 @@ def get_audit_context() -> AuditContext:
     return _audit_context.get()
 
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments, too-many-positional-arguments
 def set_audit_context(
     trace_id: Optional[str] = None,
     initiator_ip: Optional[str] = None,
