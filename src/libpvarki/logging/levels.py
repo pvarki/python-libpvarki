@@ -172,7 +172,10 @@ def add_logging_level(  # pylint: disable=R0912,R0915,R0913,R0914
         )
 
     # Lock because logger class and level name are queried and set
-    logging._acquireLock()  # type: ignore[attr-defined]  # pylint: disable=W0212
+    try:
+        logging._acquireLock()  # type: ignore[attr-defined]  # pylint: disable=W0212
+    except AttributeError:
+        pass
     try:
         registered_num = logging.getLevelName(level_name)
         logger_class = logging.getLoggerClass()
@@ -248,4 +251,7 @@ def add_logging_level(  # pylint: disable=R0912,R0915,R0913,R0914
         setattr(logger_class, method_name, for_logger_class)
         setattr(logger_adapter, method_name, for_logger_adapter)
     finally:
-        logging._releaseLock()  # type: ignore[attr-defined]  # pylint: disable=W0212
+        try:
+            logging._releaseLock()  # type: ignore[attr-defined]  # pylint: disable=W0212
+        except AttributeError:
+            pass
