@@ -1,13 +1,9 @@
 """Things common for all handlers"""
 
-from typing import Optional, Mapping, Any, Dict, cast
-import os
-import json
-import logging
+from typing import Optional, Mapping, Any
 import logging.config
 import time
 import datetime
-import copy
 
 
 import ecs_logging
@@ -77,26 +73,3 @@ class AddExtrasFilter(logging.Filter):  # pylint: disable=R0903
         for key in self.add_extras:
             setattr(record, key, self.add_extras[key])
         return super().filter(record)
-
-
-def init_logging(level: int = logging.INFO) -> None:
-    """Initialize logging, call this if you don't know any better logging arrangements"""
-    labels_json = os.environ.get("LOG_GLOBAL_LABELS_JSON")
-    console_formatter = os.environ.get("LOG_CONSOLE_FORMATTER", "ecs")
-    config = cast(Dict[str, Any], copy.deepcopy(DEFAULT_LOGGING_CONFIG))
-    # If we have the labels env set, apply filter that sets these labels to all log records
-    if labels_json:
-        config["filters"] = {
-            "global_labels": {
-                "()": AddExtrasFilter,
-                "extras": json.loads(labels_json),
-            },
-        }
-        for key in config["handlers"]:
-            if "filters" not in config["handlers"][key]:
-                config["handlers"][key]["filters"] = []
-            config["handlers"][key]["filters"].append("global_labels")
-    # Set root loglevel to desired
-    config["root"]["level"] = level
-    config["handlers"]["console"]["formatter"] = console_formatter
-    logging.config.dictConfig(config)
