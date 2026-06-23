@@ -15,7 +15,7 @@ DNDict = Mapping[str, str]
 
 
 class MTLSHeader(HTTPBase):  # pylint: disable=R0903
-    """Check Nginx injected mTLS header"""
+    """Check Nginx/Linkerd injected mTLS header"""
 
     def __init__(
         self,
@@ -33,12 +33,20 @@ class MTLSHeader(HTTPBase):  # pylint: disable=R0903
     async def __call__(self, request: Request) -> Optional[DNDict]:  # type: ignore[override]
         """actual work"""
         header_name = CONFIG("MTLS_HEADER_NAME", default="X-ClientCert-DN").lower()
-        if header_value := request.headers.get(header_name):
+        l5d_header = CONFIG("MTLS_L5D_HEADER_NAME", default="l5d-client-id").lower()
+        trust_l5d = CONFIG("MTLS_TRUST_L5D", cast=bool, default=False)
+
+        payload: Optional[DNDict] = None
+        if trust_l5d and (l5d_value := request.headers.get(l5d_header)):
+            # Linkerd identity is a bare SPIFFE-style name, not an RFC4514 DN
+            payload = {"CN": l5d_value}
+        elif header_value := request.headers.get(header_name):
             try:
                 payload = x509name2dict(x509.Name.from_rfc4514_string(header_value))
             except Exception as exc:
                 raise HTTPException(status_code=403, detail="Invalid authentication") from exc
-        else:
+
+        if payload is None:
             if self.auto_error:
                 raise HTTPException(status_code=403, detail="Not authenticated")
             return None

@@ -1,5 +1,6 @@
 """Things common for all handlers"""
 
+from logging import LogRecord
 from typing import Optional, Mapping, Any
 import logging.config
 import time
@@ -68,7 +69,7 @@ class AddExtrasFilter(logging.Filter):  # pylint: disable=R0903
         self.add_extras = extras
         super().__init__(name)
 
-    def filter(self, record: logging.LogRecord) -> bool:
+    def filter(self, record: logging.LogRecord) -> bool | LogRecord:
         """Add the extras then call parent filter"""
         for key in self.add_extras:
             setattr(record, key, self.add_extras[key])
