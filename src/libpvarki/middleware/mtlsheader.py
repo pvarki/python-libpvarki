@@ -41,7 +41,11 @@ class MTLSHeader(HTTPBase):  # pylint: disable=R0903
         }
 
         payload: Optional[DNDict] = None
-        if trust_l5d and (l5d_value := request.headers.get(l5d_header)) and l5d_value not in mtls_trusted_ingress_identities:
+        if (
+            trust_l5d
+            and (l5d_value := request.headers.get(l5d_header))
+            and l5d_value not in mtls_trusted_ingress_identities
+        ):
             # Linkerd identity is a bare SPIFFE-style name, not an RFC4514 DN
             payload = {"CN": l5d_value}
         elif header_value := request.headers.get(header_name):
