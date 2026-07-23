@@ -10,7 +10,6 @@ from pydantic import ValidationError
 
 from libpvarki.schemas.product import UserCRUDRequest, UserInstructionFragment
 from libpvarki.schemas.generic import OperationResultResponse
-from .test_middleware import mtlsclient  # pylint: disable=W0611
 
 
 # pylint: disable=W0621
