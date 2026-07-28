@@ -15,7 +15,7 @@ SPOOF_DN = "CN=admin,O=admin,C=FI"
 
 # l5d trusted (Traefik registered as an ingress); STRICT additionally requires an l5d header.
 L5D = {"MTLS_TRUST_L5D": "true", "MTLS_TRUSTED_INGRESS_IDENTITIES": TRUSTED_INGRESS}
-STRICT = {**L5D, "MTLS_REQUIRE_L5D": "true"}
+L5D_STRICT = {**L5D, "MTLS_REQUIRE_L5D": "true"}
 MTLS_ENV_VARS = ("MTLS_TRUST_L5D", "MTLS_REQUIRE_L5D", "MTLS_TRUSTED_INGRESS_IDENTITIES")
 
 
@@ -56,13 +56,13 @@ def test_hello() -> None:
             id="l5d-disabled-uses-cert",
         ),
         pytest.param(
-            STRICT,
+            L5D_STRICT,
             {"l5d-client-id": TRUSTED_INGRESS, "X-ClientCert-DN": USER_CERT_DN},
             200,
             USER_CN,
             id="strict-ingress-cert",
         ),
-        pytest.param(STRICT, {"X-ClientCert-DN": SPOOF_DN}, 403, None, id="strict-no-l5d-fails"),
+        pytest.param(L5D_STRICT, {"X-ClientCert-DN": SPOOF_DN}, 403, None, id="strict-no-l5d-fails"),
     ],
 )
 def test_mtls_identity(
